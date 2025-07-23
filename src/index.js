@@ -14,7 +14,7 @@ const cors = require('cors')
 require("./corn/potdScheduler");
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://code-flow-frontend.vercel.app',
     credentials: true 
 }))
 
