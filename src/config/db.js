@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const connectionString = "mongodb+srv://Adheli:123@cluster1.55ocjqp.mongodb.net/Leetcode";
+const connectionString = process.env.DB_CONNET;
 
 async function main(){
     await mongoose.connect(connectionString);
