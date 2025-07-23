@@ -27,7 +27,14 @@ const register = async(req,res)=>{
         const token = jwt.sign({id:user._id,email:user.email,name:user.firstName,role:user.role},key,{expiresIn:3600});
 
         // Add the token to cookies
-        res.cookie("token",token,{maxAge:60*60*1000});
+        // res.cookie("token",token,{maxAge:60*60*1000});
+
+         res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      maxAge: 60 * 60 * 1000
+    });
 
         // send reply
         const reply = {
@@ -70,7 +77,13 @@ const login = async (req, res) => {
       { expiresIn: 3600 }
     );
 
-    res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
+    // res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
+       res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      maxAge: 60 * 60 * 1000
+    });
 
     const reply = {
       firstName: user.firstName,
@@ -101,7 +114,13 @@ const logout = async(req,res)=>{
         await redisClient.expireAt(`token:${token}`,payload.exp);
 
         // Empty the cookies
-        res.cookie("token",null,{maxAge:new Date(Date.now())});
+        // res.cookie("token",null,{maxAge:new Date(Date.now())});
+         res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      maxAge: 60 * 60 * 1000
+    });
 
         res.send("Logged Out successfully");
     }
