@@ -14,7 +14,7 @@ problemRouter.get('/problemSolvedByUser', userMiddleware, solvedAllProblembyUser
 problemRouter.get('/submittedProblem/:pid', userMiddleware, submittedProblem);
 
 // Problem to Fetch
-problemRouter.get('/getAllProblems',userMiddleware, fetchAllProblems);
+problemRouter.get('/getAllProblems', fetchAllProblems);
 problemRouter.get('/problemById/:id',userMiddleware, problemFetchById);
 
 // Problem to update
