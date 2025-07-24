@@ -2,28 +2,46 @@ const cron = require("node-cron");
 const POTD = require("../models/POTDModel");
 const Problem = require("../models/problemModel");
 
-const runPOTDJob = async () => {
+const setDailyPOTD = async () => {
   try {
-    const today = new Date().toISOString().split("T")[0];
+    // Get start of current day in UTC
+    const todayStart = new Date();
+    todayStart.setUTCHours(0, 0, 0, 0);
 
-    const alreadyExists = await POTD.findOne({
-      createdAt: { $gte: new Date(today) },
+    // Check if POTD already exists for today
+    const potdExists = await POTD.findOne({
+      createdAt: { $gte: todayStart }
     });
-    if (alreadyExists) return;
+    //already existing case
+    if (potdExists) {
+      console.log(`POTD already exists for ${todayStart.toISOString().split('T')[0]}`);
+      return;
+    }
 
-    const randomProblem = await Problem.aggregate([{ $sample: { size: 1 } }]);
-    if (!randomProblem.length) return;
+    // Get random problem
+    const [randomProblem] = await Problem.aggregate([
+      { $sample: { size: 1 } }
+    ]);
+    
+    if (!randomProblem) {
+      console.error("No problems available for POTD selection");
+      return;
+    }
 
-    await POTD.create({ problemId: randomProblem[0]._id });
+    // Create new POTD
+    await POTD.create({ 
+      problemId: randomProblem._id,
+      date: todayStart
+    });
 
-    console.log(`POTD inserted for ${today}`);
+    console.log(`New POTD set for ${todayStart.toISOString().split('T')[0]}: ${randomProblem.title}`);
   } catch (err) {
-    console.error("POTD error:", err.message);
+    console.error("POTD Error:", err.message);
   }
 };
 
-// Run once on server started
-// runPOTDJob();
-
-// Run every midnight (only if server is running)
-cron.schedule("0 0 * * *", runPOTDJob);
+// Schedule to run daily at midnight UTC
+cron.schedule("0 0 * * *", setDailyPOTD, {
+  timezone: "UTC",
+  scheduled: true
+});
