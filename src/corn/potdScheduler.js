@@ -18,7 +18,7 @@ const setDailyPOTD = async () => {
       return;
     }
 
-    // Get random problem
+    // Get random problem from problem schema
     const [randomProblem] = await Problem.aggregate([
       { $sample: { size: 1 } }
     ]);
@@ -28,7 +28,7 @@ const setDailyPOTD = async () => {
       return;
     }
 
-    // Create new POTD
+    // Creating new POTD to add the random problem
     await POTD.create({ 
       problemId: randomProblem._id,
       date: todayStart
@@ -39,9 +39,8 @@ const setDailyPOTD = async () => {
     console.error("POTD Error:", err.message);
   }
 };
-
-// Schedule to run daily at midnight UTC
-cron.schedule("0 9 * * *", setDailyPOTD, {
+// to run at the 8am (Indian Standard Time)
+cron.schedule("30 2 * * *", setDailyPOTD, {
   timezone: "UTC",
   scheduled: true
 });
