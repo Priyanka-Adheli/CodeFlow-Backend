@@ -41,7 +41,7 @@ const setDailyPOTD = async () => {
 };
 
 // Schedule to run daily at midnight UTC
-cron.schedule("0 0 * * *", setDailyPOTD, {
+cron.schedule("0 9 * * *", setDailyPOTD, {
   timezone: "UTC",
   scheduled: true
 });
