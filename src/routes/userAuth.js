@@ -5,13 +5,13 @@ const userMiddleware = require('../middleware/userMiddleware');
 
 
 const authRouter = express.Router();
+
 authRouter.post('/register',register);
 authRouter.post('/login',login);
 authRouter.get('/logout',userMiddleware,logout);
 authRouter.get('/getProfile',userMiddleware,getProfile);
 authRouter.post('/adminRegister',adminRegister);
 authRouter.delete('/deleteProfile',userMiddleware,deleteProfile);
-// authRouter.put('/updateProfile',userMiddleware,updateUserProfile);
 authRouter.get('/check',userMiddleware,(req,res)=>{
     
     const reply ={
