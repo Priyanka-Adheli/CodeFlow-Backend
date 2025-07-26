@@ -13,6 +13,11 @@ const userSchema = new Schema({
         minLength:3,
         maxLength:20
     },
+    collegeName:{
+        type:String,
+        minLength:20,
+        maxLength:50
+    },
     email:{
         type:String,
         required:true,
