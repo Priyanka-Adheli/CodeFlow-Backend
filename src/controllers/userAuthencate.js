@@ -27,7 +27,13 @@ const register = async(req,res)=>{
         const token = jwt.sign({id:user._id,email:user.email,name:user.firstName,role:user.role},key,{expiresIn:3600});
 
         // Add the token to cookies
-        res.cookie("token",token,{maxAge:60*60*1000});
+        // res.cookie("token",token,{maxAge:60*60*1000});
+        res.cookie("token", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",     // HTTPS me hi true
+  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  maxAge: 60 * 60 * 1000  // 1 hour
+});
 
         // send reply
         const reply = {
@@ -70,7 +76,13 @@ const login = async (req, res) => {
       { expiresIn: 3600 }
     );
 
-    res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
+    // res.cookie("token", token, { maxAge: 60 * 60 * 1000 });
+      res.cookie("token", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",     // HTTPS me hi true
+  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  maxAge: 60 * 60 * 1000  // 1 hour
+});
 
     const reply = {
       firstName: user.firstName,
@@ -151,7 +163,13 @@ const adminRegister = async(req,res)=>{
         const token = jwt.sign({id:user._id,email:user.email,name:user.firstName,role:user.role},key,{expiresIn:3600});
 
         // Add the token to cookies
-        res.cookie("token",token,{maxAge:60*60*1000});
+        // res.cookie("token",token,{maxAge:60*60*1000});
+         res.cookie("token", token, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",     // HTTPS me hi true
+  sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+  maxAge: 60 * 60 * 1000  // 1 hour
+});
 
         // Send response to the user
         res.status(201).send(user);
@@ -253,4 +271,40 @@ const getPOTDDates = async(req,res) =>{
 }
 
 
-module.exports = {register,login,logout,getProfile,adminRegister,deleteProfile,leaderBoardData,problemInfoSolvedByUser,getPOTDDates};
+const updateUserProfile = async(req,res) =>{
+  try{
+    const {token} = req.cookies;
+
+    const payload = jwt.verify(token,key);
+    const userId = payload.id;
+    const user = await User.findById(userId);
+
+    const data = req.body;
+
+    if(data.email!=user.email)
+      return res.status(400).json({error:"Cannot be updated Profile"});
+
+    if(data.firstName)
+      user.firstName = data.firstName;
+
+    if(data.lastName)
+      user.lastName = data.lastName;
+
+    if(data.collegeName)
+      user.collegeName = data.collegeName;
+
+    // if(data.password)
+    //   user.password = data.password;
+
+    await user.save();
+
+    res.status(200).send("Profile Updated Successfully!");
+
+    }
+    catch(err)
+    {
+        console.log(err);
+        res.status(500).json({error:err.message});
+    }
+}
+module.exports = {register,login,logout,getProfile,adminRegister,deleteProfile,leaderBoardData,problemInfoSolvedByUser,getPOTDDates,updateUserProfile};
