@@ -21,6 +21,11 @@ const userSchema = new Schema({
         lowercase:true,
         immutable: true,
     },
+    collegeName:{
+        type:String,
+        min:20,
+        max:50
+    },
     password:{
         type:String,
         required:true,
