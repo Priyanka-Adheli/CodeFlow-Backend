@@ -12,7 +12,6 @@ const key = process.env.SECERT_KEY;
 
 const register = async(req,res)=>{
     try{
-       
         // Validate the user data
         validate(req.body);
 
