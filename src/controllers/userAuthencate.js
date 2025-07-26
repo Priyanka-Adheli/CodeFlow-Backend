@@ -12,6 +12,7 @@ const key = process.env.SECERT_KEY;
 
 const register = async(req,res)=>{
     try{
+       
         // Validate the user data
         validate(req.body);
 
@@ -251,40 +252,5 @@ const getPOTDDates = async(req,res) =>{
   }
 }
 
-const updateUserProfile = async(req,res) =>{
-  try{
-    const {token} = req.cookies;
 
-    const payload = jwt.verify(token,key);
-    const userId = payload.id;
-    const user = await User.findById(userId);
-
-    const data = req.body;
-
-    if(data.email!=user.email)
-      return res.status(400).json({error:"Cannot be updated Profile"});
-
-    if(data.firstName)
-      user.firstName = data.firstName;
-
-    if(data.lastName)
-      user.lastName = data.lastName;
-
-    if(data.collegeName)
-      user.collegeName = data.collegeName;
-
-    // if(data.password)
-    //   user.password = data.password;
-
-    await user.save();
-
-    res.status(200).send("Profile Updated Successfully!");
-
-    }
-    catch(err)
-    {
-        console.log(err);
-        res.status(500).json({error:err.message});
-    }
-}
-module.exports = {register,login,logout,getProfile,adminRegister,deleteProfile,leaderBoardData,problemInfoSolvedByUser,getPOTDDates,updateUserProfile};
+module.exports = {register,login,logout,getProfile,adminRegister,deleteProfile,leaderBoardData,problemInfoSolvedByUser,getPOTDDates};
