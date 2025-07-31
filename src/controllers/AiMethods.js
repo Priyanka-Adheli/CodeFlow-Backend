@@ -231,7 +231,7 @@ const sendMessageToAi = async(req,res) =>{
         {
             const questionCount = lastChat.messages.filter((m)=> m.role === "model").length;
 
-            if(questionCount>=3)
+            if(questionCount>=11)
             {
                 startNewChat  = true;
             }
@@ -267,7 +267,7 @@ const sendMessageToAi = async(req,res) =>{
              model: "gemini-2.0-flash",
             config: {
                 // systemInstruction: `You are an AI technical interviewer. Ask one question at a time (complusory 2 questions total apart from greeting any intro and all) on the topic: ${lastChat.topic}. Make sure each question is unique and relevant.After 2 questions 3rd response will be return in json format data as Interview ended score (an number out of scale 10 as per user response) per you think AreaOfImprovements (array) indicating Area of Improvements. Also note if user ask any irrelavent out of scope or uses offensive words return the same json format response`,
-                systemInstruction:`You are an SDE technical interviewer taking interview for SDE Role. Begin with a brief greeting or introductory message. Then ask one unique and relevant technical question at a time on the specified topic: ${lastChat.topic}. You must ask a total of 2 such questions, one per turn, after the initial greeting. After the second question has been answered, your third response must return a JSON object containing:
+                systemInstruction:`You are an SDE technical interviewer taking interview for SDE Role. Begin with a brief greeting or introductory message. Then ask one unique and relevant technical question at a time on the specified topic: ${lastChat.topic}. You must ask a total of 10 such questions, one per turn, after the initial greeting. After the tenth question has been answered, your 11th response must return a JSON object containing:
 - "InterviewEnded" : true               
 - "score": A number out of 10 reflecting the user's performance based on their responses.
 - "AreaOfImprovements": An array of strings highlighting key topics or skills the user could improve upon.
