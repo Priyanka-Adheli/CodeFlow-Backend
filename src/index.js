@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 
-require('dotenv').config;
+require('dotenv').config();
 
 const cookieParser = require('cookie-parser');
 const main = require('./config/db');
@@ -13,10 +13,17 @@ const aiRouter = require('./routes/AIRoute');
 const cors = require('cors')
 require("./corn/potdScheduler");
 
+// app.use(cors({
+//     origin: 'https://code-flow-frontend.vercel.app',
+//     credentials: true 
+// }))
+
 app.use(cors({
-    origin: 'https://code-flow-frontend.vercel.app',
-    credentials: true 
-}))
+    origin: "https://code-flow-frontend.vercel.app",
+    methods: ["GET","POST","PUT","DELETE"],
+    allowedHeaders: ["Content-Type","Authorization"],
+    credentials: true
+}));
 
 app.use(express.json());
 app.use(cookieParser());
