@@ -35,7 +35,7 @@ const userMiddleware = async(req,res,next)=>{
     }
     catch(err)
     {
-        res.status(400).send("Error "+err);
+        res.status(401).json({ error: err.message });
     }
 }
 
