@@ -6,6 +6,7 @@ const {
 const problem = require("../models/problemModel");
 const User = require("../models/userModel");
 const POTD = require("../models/POTDModel");
+const { getTodayPOTD } = require("../corn/potdScheduler");
 const statusCodeMap = new Map([
   [4, "Wrong Answer"],
   [5, "Time Limit Exceeded"],
@@ -341,11 +342,17 @@ const problemSolvedList = async(req,res) =>{
 
 const randomProblem = async(req,res) =>{
   try{
-  const latestPotd = await POTD.findOne({})
-    .sort({ createdAt: -1 })
-    .populate("problemId");
+  let todayPotd = await getTodayPOTD();
+  let latestPotd = todayPotd && await todayPotd.populate("problemId");
 
-  if (!latestPotd) {
+  // Today's problem was deleted after being picked - pick another one
+  if (latestPotd && !latestPotd.problemId) {
+    await POTD.deleteOne({ _id: latestPotd._id });
+    todayPotd = await getTodayPOTD();
+    latestPotd = todayPotd && await todayPotd.populate("problemId");
+  }
+
+  if (!latestPotd || !latestPotd.problemId) {
     return res.status(404).json({ message: "No POTD found" });
   }
 

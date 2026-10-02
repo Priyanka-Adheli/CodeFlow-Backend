@@ -6,6 +6,12 @@ const potdSchema = Schema({
     default: Date.now, // ⏰ precise timestamp
     index: true,
   },
+  // UTC date (YYYY-MM-DD) this POTD belongs to; unique so only one per day
+  day: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
   problemId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "problem",

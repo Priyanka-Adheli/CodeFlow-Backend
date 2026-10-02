@@ -11,7 +11,7 @@ const problemRouter = require('./routes/problemRoute');
 const submitRouter =require('./routes/submissionRoute');
 const aiRouter = require('./routes/AIRoute');
 const cors = require('cors')
-require("./corn/potdScheduler");
+const { setDailyPOTD } = require("./corn/potdScheduler");
 
 // app.use(cors({
 //     origin: 'https://code-flow-frontend.vercel.app',
@@ -52,6 +52,9 @@ const InitializeComponent = async()=>{
     try{
         await Promise.all([main(),redisClient.connect()]);
         console.log("Connected to Database");
+
+        // Create today's POTD if the cron run was missed while the server was down
+        setDailyPOTD();
         
         app.listen(port,()=>{
         console.log("Server is Listening");

@@ -3,6 +3,7 @@ const Submission = require("../models/SubmissionModel");
 const User = require('../models/userModel');
 const redisClient = require("../config/redis");
 const POTD = require("../models/POTDModel");
+const { todayKey } = require("../corn/potdScheduler");
 const mongoose = require('mongoose');
 const {getMostUsedLanguage} = require("../utils/problemUtility");
 const {
@@ -171,13 +172,11 @@ const submitProblem = async (req, res) => {
         await user.save();
       }
       // potd case when problem solved is POTD
-        const potd = await POTD.findOne().sort({createdAt : -1});
+        const potd = await POTD.findOne({ day: todayKey() });
 
         const isPotd = potd && potd.problemId == problemId;
 
-        const isToday = new Date(potd.createdAt).toDateString() === new Date().toDateString();
-
-        if(isPotd && isToday && status=='Accepted')
+        if(isPotd && status=='Accepted')
         {
 
           console.log("yes its potd");
